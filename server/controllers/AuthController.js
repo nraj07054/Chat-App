@@ -1,5 +1,5 @@
 import { compare } from "bcrypt";
-import User from "../models/UserModel.js";
+import Users from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
 import { renameSync, unlinkSync } from "fs";
 
@@ -17,7 +17,7 @@ export const signup = async (req, res, next) => {
     if (!email || !password) {
       return res.status(400).send("Email and Password both are compulsory");
     }
-    const user = await User.create({ email, password });
+    const user = await Users.create({ email, password });
     res.cookie("jwt", createToken(email, user.id), {
       maxAge,
       secure: true,
@@ -44,7 +44,7 @@ export const login = async (req, res, next) => {
       return res.status(400).send("Email and Password field can't be Empty ‼️");
     }
 
-    const user = await User.findOne({ email });
+    const user = await Users.findOne({ email });
 
     if (!user)
       return res.status(404).send("User with given Email ID not found !");
@@ -76,7 +76,7 @@ export const login = async (req, res, next) => {
 
 export const getUserInfo = async (req, res, next) => {
   try {
-    const userData = await User.findById(req.userId);
+    const userData = await Users.findById(req.userId);
     if (!userData)
       return res.status(404).send("User with given Email ID not found !");
 
@@ -106,7 +106,7 @@ export const updateProfile = async (req, res, next) => {
         .send("Firstname, lastname and color fields are required ‼️");
     }
 
-    const userData = await User.findByIdAndUpdate(
+    const userData = await Users.findByIdAndUpdate(
       userId,
       {
         firstName,
@@ -141,7 +141,7 @@ export const addProfileImage = async (req, res, next) => {
     let fileName = "uploads/profiles/" + date + req.file.originalname;
     renameSync(req.file.path, fileName);
 
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await Users.findByIdAndUpdate(
       req.userId,
       { image: fileName },
       { new: true, runValidators: true }
@@ -158,7 +158,7 @@ export const addProfileImage = async (req, res, next) => {
 export const removeProfileImage = async (req, res, next) => {
   try {
     const { userId } = req;
-    const user = await User.findById(userId);
+    const user = await Users.findById(userId);
 
     if (!user) return res.status(404).send("User not found.");
 

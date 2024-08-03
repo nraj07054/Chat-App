@@ -18,11 +18,22 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
 
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
   const validateLogin = () => {
     if (!email.length) {
       toast.error("Email is required");
       return false;
     }
+
+    if (!validateEmail(email)) {
+      toast.error("Please enter valid email address.");
+      return false;
+    }
+
     if (!password.length) {
       toast.error("Password is required");
       return false;
@@ -33,6 +44,10 @@ const Auth = () => {
   const validateSignup = () => {
     if (!email.length) {
       toast.error("Email is required");
+      return false;
+    }
+    if (!validateEmail(email)) {
+      toast.error("Please enter valid email address.");
       return false;
     }
     if (!password.length) {
